@@ -1,7 +1,8 @@
-exports.getTimeStamp = () => {
-   process.env.TZ = 'Asia/Dhaka';
-   const date =
-      new Date().getFullYear() +
+exports.getTimeStamp = (strDate = new Date()) => {
+   let date = new Date(strDate);
+
+   date =
+      date.getFullYear() +
       '-' +
       ('00' + (date.getMonth() + 1)).slice(-2) +
       '-' +

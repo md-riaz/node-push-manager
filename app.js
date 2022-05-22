@@ -1,7 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const authRoutes = require('./routes/auth-routes');
+const authRoutes = require('./routes/authRoutes');
+const siteRoutes = require('./routes/siteRoutes');
 const HttpError = require('./utils/http-error');
 const { errorHandler } = require('./middlewares/errorHandler');
 require('dotenv').config();
@@ -23,7 +24,7 @@ app.use((req, res, next) => {
 });
 
 // Routes
-
+app.use('/api', siteRoutes);
 app.use('/api/auth', authRoutes);
 
 // if route not found

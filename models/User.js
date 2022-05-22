@@ -20,6 +20,22 @@ class User {
 
       return sessionId;
    }
+
+   static async getWebsites(userid) {
+      let sql = `SELECT domain, created_at FROM website WHERE user_id = ${userid}`;
+
+      let [rows] = await db.execute(sql);
+
+      return rows || null;
+   }
+
+   static async addWebsite(userid, domain) {
+      let sql = `INSERT INTO website (user_id, domain, created_at) VALUES ('${userid}', '${domain}', '${getTimeStamp()}')`;
+
+      await db.execute(sql);
+
+      return true;
+   }
 }
 
 module.exports = User;
