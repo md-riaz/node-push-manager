@@ -5,6 +5,10 @@ const authRoutes = require('./routes/authRoutes');
 const siteRoutes = require('./routes/siteRoutes');
 const HttpError = require('./utils/http-error');
 const { errorHandler } = require('./middlewares/errorHandler');
+
+const Authorization = require('./middlewares/authorize');
+const { getRouteList } = require('./utils/utils');
+
 require('dotenv').config();
 
 const PORT = process.env.PORT || 5000;
@@ -23,9 +27,15 @@ app.use((req, res, next) => {
    next();
 });
 
+// authorization check middleware
+app.use(Authorization.checkPermission);
+
 // Routes
 app.use('/api', siteRoutes);
 app.use('/api/auth', authRoutes);
+
+// list of all routes
+console.log(getRouteList(app));
 
 // if route not found
 app.use((req, res, next) => {

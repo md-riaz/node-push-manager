@@ -1,13 +1,16 @@
 const HttpError = require('../utils/http-error');
 const bcrypt = require('bcrypt');
 const User = require('../models/User');
+const { validationResult } = require('express-validator');
 
 exports.login = async (req, res, next) => {
-   const { email, password } = req.body;
+   const errors = validationResult(req);
 
-   if (!email || !password) {
-      next(new HttpError('Please provide email and password', 400));
+   if (!errors.isEmpty()) {
+      return next(new HttpError('Please provide email and password', 400));
    }
+
+   const { email, password } = req.body;
 
    const user = await User.getUser(email);
 

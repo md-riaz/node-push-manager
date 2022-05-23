@@ -2,41 +2,92 @@ const HttpError = require('../utils/http-error');
 const { getTimeStamp } = require('../utils/utils');
 const db = require('../config/database');
 
-exports.authorized = async (req, res, next) => {
-   const tokenBearer = req.get('Authorization');
+class Authorization {
+   static userid;
+   static userGroupIds;
 
-   if (!tokenBearer) {
-      return next(new HttpError('Authorization required', 405));
-   }
+   static async checkPermission(req, res, next) {
+      const request = req.originalUrl;
 
-   const token = tokenBearer.split(' ')[1];
+      let query = await db.query(`SELECT * FROM permission WHERE api_path = '${request}'`);
+      console.log(query);
+      const permission = query.fetchArray();
 
-   if (!token) {
-      return next(new HttpError('Authorization required', 405));
-   }
+      if (permission) {
+         // check authorization
+         const authorized = await Authorization.checkAuthorization(req);
 
-   const timeOut = getTimeStamp(new Date(new Date().getTime() - 30 * 60 * 1000)); // 30 minutes in the past
-   // console.log(JSON.stringify(req.headers));
-   try {
-      let sql = `SELECT s.id AS session_id, u.id AS uid FROM user AS u JOIN token As s ON s.uid=u.id WHERE s.value = '${token}' AND (s.created_at > '${timeOut}' OR s.updated_at > '${timeOut}') AND type ='Portal' ORDER BY session_id DESC LIMIT 1`;
+         if (!authorized) {
+            return next(new HttpError('Authorization required', 401));
+         }
 
-      let [rows] = await db.execute(sql);
+         // check permission
+         const group_ids = Authorization.userGroupIds.map((g) => g.group_id).join(',');
 
-      const session = rows[0];
+         query = await db.query(
+            `SELECT * FROM acl WHERE permission_id = ${permission.id} AND (group_id IN (${group_ids}) OR user_id = ${Authorization.userid})`
+         );
 
-      if (!session) {
-        return next(new HttpError('Authorization required', 405));
+         const check_permission = query.numRows();
+
+         // if not permission
+         if (!check_permission) {
+            return next(new HttpError('Unauthorized access', 403));
+         }
       }
 
-      // update session time
-       await db.execute(`UPDATE token SET updated_at = '${getTimeStamp()}' WHERE id = ${session.session_id} AND type = 'Portal'`);
-
-       // adding user id to request
-       req.uid = session.uid;
-   } catch (err) {
-
-      return next(new HttpError('Could not authorize', 401));
+      // permission granted
+      return next();
    }
 
-   next();
-};
+   // check permission and add necessary data to req
+   static async checkAuthorization(req) {
+      const tokenBearer = req.get('Authorization');
+
+      if (!tokenBearer) {
+         return false;
+      }
+
+      const token = tokenBearer.split(' ')[1];
+
+      if (!token) {
+         return false;
+      }
+
+      const timeOut = getTimeStamp(new Date(new Date().getTime() - 30 * 60 * 1000)); // 30 minutes in the past
+      // console.log(JSON.stringify(req.headers));
+      try {
+         let sql = `SELECT s.id AS session_id, u.id AS uid FROM user AS u JOIN token As s ON s.uid=u.id WHERE s.value = '${token}' AND (s.created_at > '${timeOut}' OR s.updated_at > '${timeOut}') AND type ='Portal' ORDER BY session_id DESC LIMIT 1`;
+
+         let query = await db.query(sql);
+
+         const session = query.fetchArray();
+
+         if (!session) {
+            return false;
+         }
+
+         // update session time
+         await db.query(
+            `UPDATE token SET updated_at = '${getTimeStamp()}' WHERE id = ${session.session_id} AND type = 'Portal'`
+         );
+
+         query = await db.query(
+            `SELECT group_id FROM user_group_relation WHERE user_id = ${session.uid} ORDER BY group_id`
+         );
+
+         const user_group = query.fetchAll();
+         this.userGroupIds = user_group;
+         this.userid = session.uid;
+
+         // adding user id to request
+         req.uid = session.uid;
+         return true;
+      } catch (err) {
+         console.log(err);
+         return false;
+      }
+   }
+}
+
+module.exports = Authorization;
