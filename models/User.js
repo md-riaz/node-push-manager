@@ -4,9 +4,7 @@ const { getTimeStamp } = require('../utils/utils');
 
 class User {
    static async getUser(email) {
-      let query = await db.query(`SELECT * FROM user WHERE email = '${email}'`);
-
-      return query.fetchArray();
+      return db.query(`SELECT * FROM user WHERE email = '${email}'`).then((r) => r.fetchArray());
    }
 
    static async startSession(userid, ip) {
@@ -20,9 +18,7 @@ class User {
    }
 
    static async getWebsites(userid) {
-      let query = await db.query(`SELECT domain, created_at FROM website WHERE user_id = ${userid}`);
-
-      return query.fetchAll();
+      return db.query(`SELECT domain, created_at FROM website WHERE user_id = ${userid}`).then((r) => r.fetchAll());
    }
 
    static async addWebsite(userid, domain) {
