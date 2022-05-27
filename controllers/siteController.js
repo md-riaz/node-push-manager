@@ -3,17 +3,15 @@ const User = require('../models/User');
 const { validationResult } = require('express-validator');
 const HttpError = require('../utils/http-error');
 
-exports.getWebsites = async (req, res, next) => {
+exports.getApps = async (req, res, next) => {
    const user_id = req.uid;
 
-   const websites = await User.getWebsites(user_id);
+   const apps = await User.getApps(user_id);
 
-   console.log(websites);
-
-   res.json({ error: 0, message: 'success', data: websites });
+   res.json({ error: 0, message: 'success', data: apps });
 };
 
-exports.addWebsite = async (req, res, next) => {
+exports.addApp = async (req, res, next) => {
    // get errors from route validation
    const errors = validationResult(req);
 
@@ -25,7 +23,7 @@ exports.addWebsite = async (req, res, next) => {
    const { domain } = req.body;
    const user_id = req.uid;
 
-   const website = await User.addWebsite(user_id, domain);
+   const app = await User.addApp(user_id, domain);
 
-   res.json({ error: 0, message: 'Website successfully added' });
+   res.json({ error: 0, message: 'App successfully added' });
 };

@@ -17,12 +17,12 @@ class User {
       return sessionId;
    }
 
-   static async getWebsites(userid) {
-      return db.query(`SELECT domain, created_at FROM website WHERE user_id = ${userid}`).then((r) => r.fetchAll());
+   static async getApps(userid) {
+      return db.query(`SELECT name, created_at FROM app WHERE user_id = ${userid}`).then((r) => r.fetchAll());
    }
 
-   static async addWebsite(userid, domain) {
-      let sql = `INSERT INTO website (user_id, domain, created_at) VALUES ('${userid}', '${domain}', '${getTimeStamp()}')`;
+   static async addApp(userid, name) {
+      let sql = `INSERT INTO app (user_id, name, created_at) VALUES ('${userid}', '${name}', '${getTimeStamp()}')`;
 
       await db.query(sql);
 

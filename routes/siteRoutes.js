@@ -5,10 +5,10 @@ const { check } = require('express-validator');
 
 const router = express.Router();
 
-// get user websites
-router.route('/websites').get(siteController.getWebsites);
+// get user apps
+router.route('/apps').get(siteController.getApps);
 router
-   .route('/websites')
-   .post(check('domain').isLength({ min: 1 }).withMessage('Domain name is required'), siteController.addWebsite);
+   .route('/apps')
+   .post(check('app').isLength({ min: 1 }).withMessage('App name is required'), siteController.addApp);
 
 module.exports = router;
