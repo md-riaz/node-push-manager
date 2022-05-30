@@ -13,4 +13,8 @@ router
 
 router.route('/routelist').get(siteController.getApiList);
 
+router.route('/roles').get(siteController.getRoles);
+
+router.route('/users').get(siteController.getUsers);
+
 module.exports = router;
