@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const fs = require('fs');
 
 const authRoutes = require('./routes/authRoutes');
 const siteRoutes = require('./routes/siteRoutes');
@@ -34,8 +35,12 @@ app.use(Authorization.checkPermission);
 app.use('/api', siteRoutes);
 app.use('/api/auth', authRoutes);
 
-// list of all routes
-console.log(getRouteList(app));
+// save route list to json file
+fs.writeFile('./routes/routeList.json', JSON.stringify(getRouteList(app)), (err) => {
+   if (err) {
+      return console.log(err);
+   }
+});
 
 // if route not found
 app.use((req, res, next) => {

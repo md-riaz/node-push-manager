@@ -11,4 +11,6 @@ router
    .route('/apps')
    .post(check('app').isLength({ min: 1 }).withMessage('App name is required'), siteController.addApp);
 
+router.route('/routelist').get(siteController.getApiList);
+
 module.exports = router;
