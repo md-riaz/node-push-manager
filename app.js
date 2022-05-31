@@ -4,6 +4,7 @@ const fs = require('fs');
 
 const authRoutes = require('./routes/authRoutes');
 const siteRoutes = require('./routes/siteRoutes');
+const subscriptionRoutes = require('./routes/subscriptionRoutes');
 const HttpError = require('./utils/http-error');
 const { errorHandler } = require('./middlewares/errorHandler');
 
@@ -32,8 +33,9 @@ app.use((req, res, next) => {
 app.use(Authorization.checkPermission);
 
 // Routes
-app.use('/api', siteRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/subscription', subscriptionRoutes);
+app.use('/api', siteRoutes);
 
 // save route list to json file
 fs.writeFile('./routes/routeList.json', JSON.stringify(getRouteList(app)), (err) => {

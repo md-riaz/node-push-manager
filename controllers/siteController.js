@@ -15,7 +15,7 @@ exports.getApps = async (req, res, next) => {
 exports.addApp = async (req, res, next) => {
    // get errors from route validation
    const errors = validationResult(req);
-   console.log(req.body);
+
    if (!errors.isEmpty()) {
       let errs = errors.array();
       return next(new HttpError(errs[0].msg, 400));

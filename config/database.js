@@ -33,6 +33,14 @@ class Database {
    numRows() {
       return this.results.length;
    }
+
+   affectedRows() {
+      return this.results.affectedRows;
+   }
+
+   insertId() {
+      return this.results.insertId;
+   }
 }
 
 module.exports = new Database();
