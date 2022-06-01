@@ -1,1 +1,1 @@
-["/api/auth/login","/api/subscription/","/api/apps","/api/routelist","/api/roles","/api/users"]
+["/api/auth/login","/api/subscription/","/api/app/:id/notifications","/api/apps","/api/routelist","/api/roles","/api/users"]

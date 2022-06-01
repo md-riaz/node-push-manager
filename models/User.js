@@ -30,7 +30,7 @@ class User {
    }
 
    static async getApps(userid) {
-      return db.query(`SELECT name, created_at FROM app WHERE user_id = ${userid}`).then((r) => r.fetchAll());
+      return db.query(`SELECT id, name, created_at FROM app WHERE user_id = ${userid}`).then((r) => r.fetchAll());
    }
 
    static async addApp(userid, name) {
