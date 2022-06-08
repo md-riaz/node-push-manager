@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs');
+const cron = require('node-cron');
+const webpush = require('web-push');
 
 const authRoutes = require('./routes/authRoutes');
 const siteRoutes = require('./routes/siteRoutes');
@@ -13,6 +15,7 @@ const { errorHandler } = require('./middlewares/errorHandler');
 
 const Authorization = require('./middlewares/authorize');
 const { getRouteList } = require('./utils/utils');
+const Notification = require('./utils/sendNotifications');
 
 require('dotenv').config();
 
@@ -59,3 +62,15 @@ app.use(errorHandler);
 
 // start the express server
 app.listen(PORT, () => console.log(`Server started on port http://localhost:${PORT}`));
+
+const publicVapidKey = 'BJthRQ5myDgc7OSXzPCMftGw-n16F7zQBEN7EUD6XxcfTTvrLGWSIG7y_JxiWtVlCFua0S8MTB5rPziBqNx1qIo';
+const privateVapidKey = '3KzvKasA2SoCxsp0iIG_o9B0Ozvl1XDwI63JRKNIWBM';
+
+webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
+
+const cronRunner = async () => {
+   console.log('running cron job');
+   Notification.send();
+};
+
+cron.schedule('* * * * *', cronRunner);
