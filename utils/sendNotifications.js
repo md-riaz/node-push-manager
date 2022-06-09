@@ -7,6 +7,11 @@ class Notification {
          .query(`SELECT * FROM notification WHERE scheduled <= NOW() AND status = 0`)
          .then((result) => result.fetchAll());
 
+      if (notifications.length == 0) {
+         console.log('No notifications to send');
+         return false;
+      }
+
       notifications.forEach(async (notification) => {
          try {
             const subscriptions = await db
@@ -17,11 +22,6 @@ class Notification {
                .then((result) => result.fetchAll());
 
             const sentNotifications = [];
-
-            if (!subscriptions.length) {
-               console.log('No subscriptions found');
-               return;
-            }
 
             subscriptions.forEach(async (subscription) => {
                const { endpoint, auth, p256dh } = subscription;
@@ -34,6 +34,8 @@ class Notification {
             const dbUpdate = await db.query(`UPDATE notification SET status = 1 WHERE id = ?`, notification.id);
 
             console.log(`Notification ${notification.id} sent`);
+
+            return dbUpdate;
          } catch (error) {
             console.log(error);
          }
