@@ -18,6 +18,34 @@ class App {
 
       return notification ? true : false;
    }
+
+   static async Delete(app_id) {
+      const connection = await db.mysqlPool.getConnection();
+
+      await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+      await connection.beginTransaction();
+
+      try {
+         await connection.execute('DELETE FROM app WHERE id = ?', [app_id]);
+         await connection.execute('DELETE FROM notification WHERE app_id = ?', [app_id]);
+
+         // delete subscriptions and their keys
+         const [keyIds] = await connection.execute('SELECT key_id FROM subscription WHERE app_id = ?', [app_id]);
+
+         const keyIdsArray = keyIds.map((keyId) => keyId.key_id);
+
+         await connection.execute('DELETE FROM subscription WHERE app_id = ?', [app_id]);
+         await connection.execute('DELETE FROM `keys` WHERE id IN (?)', [keyIdsArray.join(',')]);
+
+         await connection.commit();
+         connection.release();
+
+         return true;
+      } catch (error) {
+         await connection.rollback();
+         throw error;
+      }
+   }
 }
 
 module.exports = App;

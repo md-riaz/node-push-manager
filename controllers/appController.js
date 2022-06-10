@@ -27,3 +27,15 @@ exports.setNotifications = async (req, res, next) => {
 
    return res.json({ error: 0, message: 'success', data: notification });
 };
+
+exports.DeleteApp = async (req, res, next) => {
+   const appId = req.params.id;
+
+   const app = await App.Delete(appId);
+
+   if (!app) {
+      return next(new HttpError('Could not find this app', 404));
+   }
+
+   return res.json({ error: 0, message: 'App deleted successfully', data: app });
+};

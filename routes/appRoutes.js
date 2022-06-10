@@ -17,4 +17,6 @@ router
       appController.setNotifications
    );
 
+router.route('/:id/').delete(appController.DeleteApp);
+
 module.exports = router;

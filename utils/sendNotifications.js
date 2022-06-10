@@ -1,10 +1,11 @@
 const db = require('../config/database');
 const webpush = require('web-push');
+const { getTimeStamp } = require('./utils');
 
 class Notification {
    static async send() {
       const notifications = await db
-         .query(`SELECT * FROM notification WHERE scheduled <= NOW() AND status = 0`)
+         .query(`SELECT * FROM notification WHERE scheduled = ? AND status = 0`, [getTimeStamp()])
          .then((result) => result.fetchAll());
 
       if (notifications.length == 0) {
