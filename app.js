@@ -69,8 +69,8 @@ const privateVapidKey = '3KzvKasA2SoCxsp0iIG_o9B0Ozvl1XDwI63JRKNIWBM';
 webpush.setVapidDetails('mailto:test@test.com', publicVapidKey, privateVapidKey);
 
 const cronRunner = async () => {
-   console.log('running cron job');
+   console.log('running cron job at ' + new Date());
    Notification.send();
 };
 
-cron.schedule('* * * * *', cronRunner);
+cron.schedule('* * * * * *', cronRunner);

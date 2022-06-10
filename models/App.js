@@ -11,7 +11,7 @@ class App {
    static async setNotifications(app_id, name, title, message, image, launch_url, scheduleTime) {
       const notification = db
          .query(
-            'INSERT INTO `notification`( `name`, `title`, `message`, `image_url`, `launch_url`, `scheduled`, `app_id`, `created_at`) VALUES(?,?,?,?,?,?,?,?)',
+            'INSERT INTO `notification`( `name`, `title`, `body`, `image`, `launch_url`, `scheduled`, `app_id`, `created_at`) VALUES(?,?,?,?,?,?,?,?)',
             [name, title, message, image, launch_url, scheduleTime, app_id, getTimeStamp()]
          )
          .then((r) => r.affectedRows());
