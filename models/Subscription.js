@@ -37,14 +37,17 @@ class Subscription {
 
       try {
          const [result] = await connection.execute('SELECT key_id FROM subscription WHERE endpoint = ?', [endpoint]);
-         const key_id = result[0].key_id;
 
          await connection.execute('DELETE FROM subscription WHERE endpoint = ?', [endpoint]);
-         const [{ affectedRows }] = await connection.execute('DELETE FROM keys WHERE key_id = ?', [key_id]);
+         // loop results and delete keys
+         for (const element of result) {
+            const { key_id } = element;
+            await connection.execute('DELETE FROM `keys` WHERE id = ?', [key_id]);
+         }
 
          await connection.commit();
 
-         return affectedRows;
+         return true;
       } catch (error) {
          await connection.rollback();
          throw error;
