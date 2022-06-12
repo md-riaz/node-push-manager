@@ -34,3 +34,5 @@ exports.login = async (req, res, next) => {
 
    res.json({ error: 0, message: 'Login successfull', token: sessionId });
 };
+
+exports.register = async (req, res, next) => {};

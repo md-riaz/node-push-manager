@@ -6,4 +6,6 @@ const router = express.Router();
 
 router.route('/login').post(body('email').isEmail(), body('password').isLength({ min: 4 }), authController.login);
 
+router.route('/register').post(body('email').isEmail(), body('password').isLength({ min: 4 }), authController.register);
+
 module.exports = router;
