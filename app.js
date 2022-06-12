@@ -4,11 +4,11 @@ const fs = require('fs');
 const cron = require('node-cron');
 const webpush = require('web-push');
 
-const authRoutes = require('./routes/authRoutes');
-const siteRoutes = require('./routes/siteRoutes');
-const subscriptionRoutes = require('./routes/subscriptionRoutes');
-const notificationRoutes = require('./routes/notificationRoutes');
-const appRoutes = require('./routes/appRoutes');
+const authRoutes = require('./routes/auth');
+const siteRoutes = require('./routes/site');
+const subscriptionRoutes = require('./routes/subscription');
+const notificationRoutes = require('./routes/notification');
+const appRoutes = require('./routes/app');
 
 const HttpError = require('./utils/http-error');
 const { errorHandler } = require('./middlewares/errorHandler');
@@ -46,7 +46,7 @@ app.use('/api/app', appRoutes);
 app.use('/api', siteRoutes);
 
 // save route list to json file
-fs.writeFile('./routes/routeList.json', JSON.stringify(getRouteList(app)), (err) => {
+fs.writeFile('./utils/routeList.json', JSON.stringify(getRouteList(app)), (err) => {
    if (err) {
       return console.log(err);
    }
@@ -73,4 +73,4 @@ const cronRunner = async () => {
    Notification.send();
 };
 
-cron.schedule('* * * * * *', cronRunner);
+cron.schedule('* * * * *', cronRunner);
