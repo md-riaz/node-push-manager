@@ -48,6 +48,30 @@ class User {
          )
          .then((r) => r.fetchAll());
    }
+
+   static async createUser(name, phone, email, password) {
+      const connection = await db.mysqlPool.getConnection();
+
+      await connection.execute('SET TRANSACTION ISOLATION LEVEL READ COMMITTED');
+      await connection.beginTransaction();
+
+      try {
+         let sql = `INSERT INTO user (name, phone, email, password, created_at) VALUES ('${name}', '${phone}', '${email}', '${password}', '${getTimeStamp()}')`;
+
+         const [result] = await connection.execute(sql);
+
+         const userid = result.insertId;
+
+         await connection.execute('INSERT INTO user_group_relation (user_id, group_id) VALUES(?, ?)', [userid, '2']);
+
+         await connection.commit();
+
+         return userid;
+      } catch (error) {
+         await connection.rollback();
+         throw error;
+      }
+   }
 }
 
 module.exports = User;

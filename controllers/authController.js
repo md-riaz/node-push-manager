@@ -32,7 +32,39 @@ exports.login = async (req, res, next) => {
 
    const sessionId = await User.startSession(user.id, ip);
 
-   res.json({ error: 0, message: 'Login successfull', token: sessionId });
+   res.json({
+      error: 0,
+      message: 'Login successfull',
+      token: sessionId,
+      data: { id: user.id, name: user.name, email: user.email, phone: user.phone },
+   });
 };
 
-exports.register = async (req, res, next) => {};
+exports.register = async (req, res, next) => {
+   const errors = validationResult(req);
+
+   if (!errors.isEmpty()) {
+      const err = errors.array();
+      return next(new HttpError(err[0].msg, 400));
+   }
+
+   const { name, phone, email, password } = req.body;
+
+   const user = await User.getUser(email);
+
+   if (user) {
+      return next(new HttpError('User already exists', 409));
+   }
+
+   const hashedPassword = await bcrypt.hash(password, 12);
+
+   const userId = await User.createUser(name, phone, email, hashedPassword);
+
+   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+
+   res.json({
+      error: 0,
+      message: 'User registered successfully',
+      data: { id: userId, name: name, email: email, phone: phone },
+   });
+};
