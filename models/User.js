@@ -4,7 +4,11 @@ const { getTimeStamp } = require('../utils/utils');
 
 class User {
    static async getUser(email) {
-      return db.query(`SELECT * FROM user WHERE email = '${email}'`).then((r) => r.fetchArray());
+      return db
+         .query(
+            `SELECT u.*, (SELECT GROUP_CONCAT(g.name) FROM user_group_relation AS r JOIN user_group AS g ON g.id = r.group_id WHERE r.user_id = u.id) AS group_name FROM user AS u WHERE u.email = '${email}'`
+         )
+         .then((r) => r.fetchArray());
    }
 
    static async getUsers() {

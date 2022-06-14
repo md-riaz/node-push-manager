@@ -36,7 +36,7 @@ exports.login = async (req, res, next) => {
       error: 0,
       message: 'Login successfull',
       token: sessionId,
-      data: { id: user.id, name: user.name, email: user.email, phone: user.phone },
+      data: { id: user.id, name: user.name, email: user.email, phone: user.phone, group: user.group_name },
    });
 };
 
@@ -59,8 +59,6 @@ exports.register = async (req, res, next) => {
    const hashedPassword = await bcrypt.hash(password, 12);
 
    const userId = await User.createUser(name, phone, email, hashedPassword);
-
-   const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
    res.json({
       error: 0,
