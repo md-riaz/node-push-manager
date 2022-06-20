@@ -39,6 +39,9 @@ app.use((req, res, next) => {
 app.use(Authorization.checkPermission);
 
 // Routes
+app.get('/', (req, res) => {
+   res.send('Requisting from ' + req.ip + ' ip address, go to /api/${action} to see the available actions');
+});
 app.use('/api/auth', authRoutes);
 app.use('/api/subscription', subscriptionRoutes);
 // app.use('/api/notification', notificationRoutes);

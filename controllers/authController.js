@@ -24,11 +24,7 @@ exports.login = async (req, res, next) => {
       return next(new HttpError('Invalid password', 401));
    }
 
-   const ip =
-      req.headers['x-forwarded-for'] ||
-      req.connection.remoteAddress ||
-      req.socket.remoteAddress ||
-      req.connection.socket.remoteAddress;
+   const ip = req.ip;
 
    const sessionId = await User.startSession(user.id, ip);
 

@@ -26,7 +26,7 @@ exports.setSubscriptions = async (req, res, next) => {
 
 exports.deleteSubscriptions = async (req, res, next) => {
    let endpoint = req.query.endpoint;
-   console.log(endpoint);
+
    const deleteSubscription = await Subscription.deleteSubscriptions(endpoint);
 
    if (!deleteSubscription) {

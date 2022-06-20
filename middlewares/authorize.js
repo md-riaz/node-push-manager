@@ -43,7 +43,7 @@ class Authorization {
    // check permission and add necessary data to req
    static async checkAuthorization(req) {
       const tokenBearer = req.get('Authorization');
-      console.log('tokenBearer', tokenBearer);
+
       if (!tokenBearer) {
          return false;
       }

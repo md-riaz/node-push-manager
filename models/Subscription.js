@@ -10,14 +10,9 @@ class Subscription {
       await connection.beginTransaction();
 
       try {
-         const [{ insertId: key_id }] = await connection.execute('INSERT INTO `keys` (auth, p256dh) VALUES (?, ?)', [
-            keys.auth,
-            keys.p256dh,
-         ]);
-
          const [{ affectedRows }] = await connection.execute(
-            'INSERT INTO subscription (endpoint, expirationTime, app_id, key_id) VALUES (?, ?, ?, ?)',
-            [endpoint, expirationTime, app_id, key_id]
+            'INSERT INTO subscription (endpoint, expirationTime, app_id, auth, p256dh) VALUES (?, ?, ?, ?, ?)',
+            [endpoint, expirationTime, app_id, keys.auth, keys.p256dh,]
          );
 
          await connection.commit();
@@ -36,15 +31,8 @@ class Subscription {
       await connection.beginTransaction();
 
       try {
-         const [result] = await connection.execute('SELECT key_id FROM subscription WHERE endpoint = ?', [endpoint]);
-
          await connection.execute('DELETE FROM subscription WHERE endpoint = ?', [endpoint]);
-         // loop results and delete keys
-         for (const element of result) {
-            const { key_id } = element;
-            await connection.execute('DELETE FROM `keys` WHERE id = ?', [key_id]);
-         }
-
+         
          await connection.commit();
 
          return true;

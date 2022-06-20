@@ -30,12 +30,7 @@ class App {
          await connection.execute('DELETE FROM notification WHERE app_id = ?', [app_id]);
 
          // delete subscriptions and their keys
-         const [keyIds] = await connection.execute('SELECT key_id FROM subscription WHERE app_id = ?', [app_id]);
-
-         const keyIdsArray = keyIds.map((keyId) => keyId.key_id);
-
          await connection.execute('DELETE FROM subscription WHERE app_id = ?', [app_id]);
-         await connection.execute('DELETE FROM `keys` WHERE id IN (?)', [keyIdsArray.join(',')]);
 
          await connection.commit();
          connection.release();
