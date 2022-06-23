@@ -3,7 +3,7 @@ const db = require('../config/database');
 
 class System {
    static getApiList() {
-      const rawdata = fs.readFileSync('routes/routeList.json');
+      const rawdata = fs.readFileSync('utils/routeList.json');
       return JSON.parse(rawdata);
    }
 
