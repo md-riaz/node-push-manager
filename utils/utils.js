@@ -1,3 +1,5 @@
+process.env.TZ = 'Asia/Dhaka';
+
 exports.getTimeStamp = (strDate = new Date()) => {
    let date = new Date(strDate);
 
