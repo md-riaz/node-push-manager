@@ -17,7 +17,7 @@ class Notification {
          try {
             const subscriptions = await db
                .query(
-                  'SELECT s.endpoint, k.auth, k.p256dh FROM `subscription` AS s JOIN `keys` AS k ON k.id = s.key_id WHERE s.app_id = ?',
+                  'SELECT * FROM `subscription`WHERE app_id = ?',
                   notification.app_id
                )
                .then((result) => result.fetchAll());
